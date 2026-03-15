@@ -15,6 +15,7 @@ class _CalculadoraPageState extends State<CalculadoraPage> {
   @override
   void initState() {
     displaynumber = '0';
+    //historic = [];
     super.initState();
   }
 
@@ -51,7 +52,7 @@ class _CalculadoraPageState extends State<CalculadoraPage> {
   }
 
   List<double> parseNumber(String expression) {
-    RegExp regExp = RegExp('[0-9]+\.?[0-9]*');
+    RegExp regExp = RegExp(r'[0-9]+\.?[0-9]*');
 
     var matches = regExp.allMatches(expression);
 
@@ -70,10 +71,12 @@ class _CalculadoraPageState extends State<CalculadoraPage> {
       (x) => OperationTypeEnum.values.any((op) => op.symbol == x),
     );
 
-    return expression1.map((x) => OperationTypeEnum.values.firstWhere((op)=> op.symbol == x)).toList();
+    return expression1
+        .map((x) => OperationTypeEnum.values.firstWhere((op) => op.symbol == x))
+        .toList();
   }
 
-  void calculate(){
+  void calculate() {
     String expression = displaynumber.replaceAll('.', '.');
     List<double> numbers = parseNumber(expression);
     List<OperationTypeEnum> operations = getOperator(expression);
@@ -81,45 +84,52 @@ class _CalculadoraPageState extends State<CalculadoraPage> {
     resolvePriorityOperations(numbers, operations);
     final result = resolveAdditionAndSubtraction(numbers, operations);
 
-    setState((){
+    setState(() {
       displaynumber = result.toString().replaceAll('.', ',');
     });
   }
 
-  void resolvePriorityOperations(List<double> numbers, List<OperationTypeEnum> operators){
+  void resolvePriorityOperations(
+    List<double> numbers,
+    List<OperationTypeEnum> operators,
+  ) {
     int index = 0;
 
-    while(index < operators.length){
-      if(operators[index] == OperationTypeEnum.multiplication){
-        numbers[index] = numbers[index] * numbers[index +1];
-        numbers.removeAt(index+1);
+    while (index < operators.length) {
+      if (operators[index] == OperationTypeEnum.multiplication) {
+        numbers[index] = numbers[index] * numbers[index + 1];
+        numbers.removeAt(index + 1);
         operators.removeAt(index);
-      } else if(operators[index] == OperationTypeEnum.division){
-        numbers[index] = numbers[index] / numbers[index +1];
-        numbers.removeAt(index+1);
+      } else if (operators[index] == OperationTypeEnum.division) {
+        numbers[index] = numbers[index] / numbers[index + 1];
+        numbers.removeAt(index + 1);
         operators.removeAt(index);
-      }else{
+      } else {
         index++;
       }
     }
   }
 
-  double resolveAdditionAndSubtraction(List<double> numbers, List<OperationTypeEnum> operators){
+  double resolveAdditionAndSubtraction(
+    List<double> numbers,
+    List<OperationTypeEnum> operators,
+  ) {
     int index = 0;
 
-    while(index < operators.length){
-      if(operators[index] == OperationTypeEnum.addition){
-        numbers[index] = numbers[index] + numbers[index +1];
-        numbers.removeAt(index+1);
+    while (index < operators.length) {
+      if (operators[index] == OperationTypeEnum.addition) {
+        numbers[index] = numbers[index] + numbers[index + 1];
+        numbers.removeAt(index + 1);
         operators.removeAt(index);
-      } else if(operators[index] == OperationTypeEnum.subtraction){
-        numbers[index] = numbers[index] - numbers[index +1];
-        numbers.removeAt(index+1);
+      } else if (operators[index] == OperationTypeEnum.subtraction) {
+        numbers[index] = numbers[index] - numbers[index + 1];
+        numbers.removeAt(index + 1);
         operators.removeAt(index);
       }
     }
     return numbers[0];
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,10 +138,10 @@ class _CalculadoraPageState extends State<CalculadoraPage> {
         backgroundColor: Colors.lightBlue,
         foregroundColor: Colors.white,
         actions: [
-          IconButton(
-            onPressed: (){Navigator.push(context, MaterialPageRoute(builder: ()=>HistoricPage(historic: historic));
-          );};
-          icon: Icon(Icons.history))
+          // IconButton(
+          //   onPressed: (){Navigator.push(context, MaterialPageRoute(builder: ()=>HistoricPage(historic: historic));
+          // );};
+          // icon: Icon(Icons.history))
         ],
       ),
       body: Column(
